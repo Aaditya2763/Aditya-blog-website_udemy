@@ -1,0 +1,25 @@
+{
+  "name": "aditya-blog_website_udemy",
+  "version": "1.0.0",
+  "description": "Aditya-Aditya-blogApp",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aaditya2763/Aditya-blog-website.git"
+  },
+  "author": "Aditya Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aaditya2763/Aditya-blog-website/issues"
+  },
+  "homepage": "https://github.com/Aaditya2763/Aditya-blog-website#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
+  }
+}
