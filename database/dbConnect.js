@@ -11,7 +11,6 @@ const dbConnect=async()=>{
         mongoose.set("strictQuery", false);
         mongoose.connect(DB_URL,{
             useNewUrlParser: true,
-           
             useUnifiedTopology: true
         }) 
         console.log("db connected");

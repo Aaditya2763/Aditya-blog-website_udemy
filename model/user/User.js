@@ -144,7 +144,7 @@ userSchema.pre("save",async function(next) {
 //mongoose middleware which is used to to create custom method to get the desired result 
 userSchema.methods.isPasswordMatched=async function(enteredPassword){
 
-    //we cant change the order of parameters otherwise they will give error
+//we cant change the order of parameters otherwise they will give error
 return await bcrypt.compare(enteredPassword,this.password);
 };
 //compiling Schema into model
