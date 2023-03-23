@@ -1,5 +1,7 @@
 //importing mongoose
 const mongoose=require('mongoose');
+// importing bcrypt
+const bcrypt=require('bcryptjs');
 
 //createing user schema
 const  userSchema=new mongoose.Schema({
@@ -16,10 +18,10 @@ const  userSchema=new mongoose.Schema({
         required:[true,'Gender is required'],
         type:String,
     },
-    // age:{
-    //     required:[true,'Age is required'],
-    //     type:Date,
-    // },
+    age:{
+        // required:[true,'Age is required'],
+        type:Date,
+    },
     profilePhoto:{
 type:String,
 default:'https://cdn.pixabay.com/photo/2015/03/04/22/35/avatar-659651__340.png',
@@ -131,6 +133,20 @@ virtuals:true,
 }
 );
 
+//mongoose pre middleware which i am using to hash password before creating user
+userSchema.pre("save",async function(next) {
+    const salt=await bcrypt.genSalt(10);
+    //to get access to password we have to use this constructor
+    this.password=await bcrypt.hash(this.password,salt); 
+    next();
+});
+
+//mongoose middleware which is used to to create custom method to get the desired result 
+userSchema.methods.isPasswordMatched=async function(enteredPassword){
+
+    //we cant change the order of parameters otherwise they will give error
+return await bcrypt.compare(enteredPassword,this.password);
+};
 //compiling Schema into model
 
 const User=mongoose.model('User',userSchema);
