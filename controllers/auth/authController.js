@@ -1,4 +1,5 @@
 //calling user for data modeling
+const generateToken = require("../../config/token/generateToken");
 const User = require("../../model/user/User");
 //importing  express-async-handler
 //used to handle exceptions 
@@ -10,8 +11,9 @@ const expressAsyncHandler=require("express-async-handler");
 // expressAsyncHandler used to handle exceptions
 const registerUser= expressAsyncHandler(
   async(req,res)=>{
-   
+   console.log("creating user")
       const userExist=await User.findOne({
+       
           email:req?.body?.email,
       })
   if(userExist){
@@ -50,15 +52,24 @@ const login=expressAsyncHandler(
   async(req,res)=>{
     const{password}=req.body;
  
-const user=await User.findOne({email:req?.body?.email});
-if(!user) {
+const userFound=await User.findOne({email:req?.body?.email});
+if(!userFound) {
   res.status(401);
   throw new Error("Invalid email");
 
 }
-if(user && (await user.isPasswordMatched(password)) ){
+if(userFound && (await userFound.isPasswordMatched(password)) ){
   // throw new Error("Invalid credentilas");
-  res.json(user);
+  // generateToken(user?._id)
+  res.json({
+    id:userFound?._id,
+    email:userFound?.email,
+    firstName:userFound?.firstName,
+    lastName:userFound?.lastName,
+    profileImage:userFound?.profilePhoto,
+    isAdmin:userFound?.isAdmin,
+    token:generateToken(userFound._id)
+  });
 }
     else{
       res.status(401);

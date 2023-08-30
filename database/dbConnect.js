@@ -4,7 +4,7 @@ const DB_URL=process.env.DB_URL;
 const mongoose=require("mongoose");
 
 
-//connecting to database
+//connecting to database  
 const dbConnect=async()=>{
     try{
         //added to prevent deprecation warning  for strict Query
@@ -18,7 +18,7 @@ const dbConnect=async()=>{
 
     catch(error){
         
-        console.log(error);
+        console.log(error); 
     }
 }
 

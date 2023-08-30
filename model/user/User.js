@@ -137,7 +137,7 @@ virtuals:true,
 userSchema.pre("save",async function(next) {
     const salt=await bcrypt.genSalt(10);
     //to get access to password we have to use this constructor
-    this.password=await bcrypt.hash(this.password,salt); 
+    this.password=bcrypt.hash(this.password,salt); 
     next();
 });
 
