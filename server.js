@@ -18,11 +18,13 @@ dbConnect();
 //middleware use to provide json data to a request
 app.use(express.json());
 //importing all auth routes to authroutesroutes
-const authRoutes=require('./routes/user/authRoutes')
+const authRoutes=require('./routes/auth/authRoutes')
+const userRoutes=require('./routes/users/userRoutes')
  
 //allowing app to use routes
 
 app.use(authRoutes); 
+app.use(userRoutes);
 // always use middleware velow your all routes
 app.use(notFound);
 //As error handler middleware dependent on notfound middleware to receive  error message 

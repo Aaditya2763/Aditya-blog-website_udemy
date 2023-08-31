@@ -134,19 +134,31 @@ virtuals:true,
 );
 
 //mongoose pre middleware which i am using to hash password before creating user
-userSchema.pre("save",async function(next) {
-    const salt=await bcrypt.genSalt(10);
-    //to get access to password we have to use this constructor
-    this.password=bcrypt.hash(this.password,salt); 
-    next();
+// Mongoose pre middleware to hash the password before saving
+userSchema.pre("save", async function(next) {
+
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(this.password, salt);
+        this.password = hashedPassword;
+        next();
+    } catch (error) { 
+        return next(error);
+    }
 });
 
-//mongoose middleware which is used to to create custom method to get the desired result 
-userSchema.methods.isPasswordMatched=async function(enteredPassword){
-
-//we cant change the order of parameters otherwise they will give error
-return await bcrypt.compare(enteredPassword,this.password);
+// Custom method to compare entered password with hashed password
+userSchema.methods.isPasswordMatched = async function(enteredPassword) {
+    try {
+        return await bcrypt.compare(enteredPassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
+
+// ... Rest of the schema definition and model compilation
+
 //compiling Schema into model
 
 const User=mongoose.model('User',userSchema);

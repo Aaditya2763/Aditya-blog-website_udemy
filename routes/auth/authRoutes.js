@@ -4,6 +4,7 @@ const {registerUser,
        login,
       }=require('../../controllers/auth/authController');
 
+      
 //registering user
 router.route('/user/register')
 .post(registerUser);
@@ -11,6 +12,7 @@ router.route('/user/register')
 //user login route
 router.route('/user/login')
 .post(login);
+//getting all users
 
 
 
