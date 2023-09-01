@@ -6,7 +6,7 @@ const User = require("../../model/user/User");
 const expressAsyncHandler=require("express-async-handler");
 
 
-//----------------------------------------------------------------------
+//------------------------Register ctrl----------------------------------------------
 //controller to register user
 // expressAsyncHandler used to handle exceptions
 const registerUser= expressAsyncHandler(
@@ -46,7 +46,7 @@ const registerUser= expressAsyncHandler(
 ); 
 
 
-//---------------------------------------------------------------------------------
+//-------------------------------login ctrl--------------------------------------------------
 //controller to login user
 const login=expressAsyncHandler(
   async(req,res)=>{
