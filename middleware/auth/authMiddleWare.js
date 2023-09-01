@@ -18,13 +18,15 @@ const authMiddleware = expressAsyncHandler(async (req, res, next) => {
         //and it also includes password and we dont want to send the password that is why we rae removing the password form the user variable;
         const user = await User.findById(decoded?.id).select("-pasword");
         req.user = user;
+        console.log(req.user)
         next();
-      } else {
-        throw new Error("invalid token");
-      }
+      } 
     } catch (error) {
       throw new Error("Not authorised login again");
     }
+  }
+  else{
+    throw new Error("There is no token attached to the header")
   }
 });
 

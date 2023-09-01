@@ -136,16 +136,17 @@ virtuals:true,
 //mongoose pre middleware which i am using to hash password before creating user
 // Mongoose pre middleware to hash the password before saving
 userSchema.pre("save", async function(next) {
+if(!this.isModified('password')){
+    console.log("changing pass1")
+     next();
+}
 
-
-    try {
+  console.log("changing pass    ")
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(this.password, salt);
         this.password = hashedPassword;
         next();
-    } catch (error) { 
-        return next(error);
-    }
+    
 });
 
 // Custom method to compare entered password with hashed password

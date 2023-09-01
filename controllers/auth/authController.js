@@ -11,7 +11,7 @@ const expressAsyncHandler=require("express-async-handler");
 // expressAsyncHandler used to handle exceptions
 const registerUser= expressAsyncHandler(
   async(req,res)=>{
-   console.log("creating user")
+     
       const userExist=await User.findOne({
        
           email:req?.body?.email,
