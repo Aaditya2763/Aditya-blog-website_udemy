@@ -2,7 +2,8 @@
 const mongoose=require('mongoose');
 // importing bcrypt
 const bcrypt=require('bcryptjs');
-
+//crypto is a node built in function which return a desired value result in hexadecimal
+const crypto=require('crypto')
 //createing user schema
 const  userSchema=new mongoose.Schema({
     firstName:{
@@ -69,6 +70,7 @@ type:String,
     },
     accountVerificationToken:{
         type:String,
+      
        
     },
     accountVerificationTokenExpires:{
@@ -137,11 +139,10 @@ virtuals:true,
 // Mongoose pre middleware to hash the password before saving
 userSchema.pre("save", async function(next) {
 if(!this.isModified('password')){
-    console.log("changing pass1")
      next();
 }
 
-  console.log("changing pass    ")
+  
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(this.password, salt);
         this.password = hashedPassword;
@@ -158,8 +159,41 @@ userSchema.methods.isPasswordMatched = async function(enteredPassword) {
     }
 };
 
-// ... Rest of the schema definition and model compilation
+//generate account verification token
+userSchema.methods.createAccountVerificationToken = async function() {
+    try {
+        const verificationToken=  crypto.randomBytes(32).toString('hex')
+        const hasedtoken=crypto.createHash("sha256").update(verificationToken).digest("hex")
+        
+        this.accountVerificationToken = hasedtoken;
 
+    // Set an expiration time (e.g., 10 minutes)
+    const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    this.passwordResetExpires = expirationTime;
+
+    return verificationToken;
+    } catch (error) {
+        throw error;
+    }
+};
+
+//generate password verification token
+userSchema.methods.createPasswordResetToken = async function() {
+    try {
+        const resetToken=crypto.randomBytes(32).toString('hex')
+        const hasedtoken=crypto.createHash("sha256").update(resetToken).digest("hex")
+        
+        this.passwordResetToken = hasedtoken;
+
+    // Set an expiration time (e.g., 10 minutes)
+    const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    this.passwordResetExpires = expirationTime;
+
+    return resetToken;
+    } catch (error) {
+        throw error;
+    }
+};
 //compiling Schema into model
 
 const User=mongoose.model('User',userSchema);

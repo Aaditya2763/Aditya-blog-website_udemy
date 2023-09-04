@@ -1,5 +1,5 @@
 // importing dbUrl from process.env file
-const DB_URL=process.env.DB_URL;
+const DB_URL=process.env.DB_URL ;
 //importing mongoose
 const mongoose=require("mongoose");
 
@@ -11,14 +11,14 @@ const dbConnect=async()=>{
         mongoose.set("strictQuery", false);
         mongoose.connect(DB_URL,{
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
         }) 
         console.log("db connected");
     }
 
     catch(error){
         
-        console.log(error); 
+        console.log(error.message); 
     }
 }
 

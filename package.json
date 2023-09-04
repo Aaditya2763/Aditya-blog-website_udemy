@@ -1,6 +1,7 @@
-{
+ {
   "name": "aditya-blog_website_udemy",
   "version": "1.0.0",
+  
   "description": "Aditya-Aditya-blogApp",
   "main": "server.js",
   "scripts": {
@@ -18,12 +19,16 @@
   },
   "homepage": "https://github.com/Aaditya2763/Aditya-blog-website#readme",
   "dependencies": {
+    "@trycourier/courier": "^5.1.0",
     "async-handler": "^0.0.3",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
+    "emailjs": "^4.0.2",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^6.9.1"
+    "mongoose": "^6.9.1",
+    "node-mailjet": "^6.0.4",
+    "nodemailer": "^6.9.4"
   }
 }

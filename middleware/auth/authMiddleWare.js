@@ -9,16 +9,16 @@ const authMiddleware = expressAsyncHandler(async (req, res, next) => {
       var token;
       //this will provide an array having 0th index as "Bearer" and 1th index as "token  "
       token = req.headers.authorization.split(" ")[1];
-      // console.log(token)
+   
       if (token) {
         // the decoded variable now contain userid after verifying the token because
         //while generating token we are providing id as a parameter
         const decoded = jwt.verify(token, Key);
         //the user variable store all the data of the user fetched by the particular id
         //and it also includes password and we dont want to send the password that is why we rae removing the password form the user variable;
-        const user = await User.findById(decoded?.id).select("-pasword");
+        const user = await User.findById(decoded?.id).select("-password");
         req.user = user;
-        console.log(req.user)
+       
         next();
       } 
     } catch (error) {
