@@ -15,9 +15,12 @@ const {
   geverateVerifyAccountToken,
   generatePasswordResetToken,
   changePasswordCtrl,
+  userProfileUpdateCtrl,
 } = require("../../controllers/users/usersController");
+
 const { authMiddleware } = require("../../middleware/auth/authMiddleWare");
-const { verify } = require("jsonwebtoken");
+
+const { userProfileUpload,profilePhotoResize } = require("../../middleware/upload/profilePhotoUpload");
 
 /*------------------------All users--------------------------------*/
 router.route("/").get(authMiddleware, getAllUsers);
@@ -26,8 +29,11 @@ router.route("/").get(authMiddleware, getAllUsers);
 router.route("/:id").get(fetchUser).delete(deleteUser);
 
 /*-----------------UserProfile----------*/
+
 router.route("/profile/:id").get(authMiddleware, userProfile);
 router.route("/profile").put(authMiddleware, updateProfile);
+// single('name') is same as it is mentioned it as key
+router.route("/profile-photo-upload").put(authMiddleware,userProfileUpload.single('image'),profilePhotoResize,userProfileUpdateCtrl)
 
 /*----------------- change Userpassword----------*/
 router.route("/password").put(authMiddleware, updatePassword);
@@ -68,3 +74,6 @@ router
   .route("/reset-password/:verificationToken")
   .post(changePasswordCtrl);
 
+  
+
+  module.exports=router;

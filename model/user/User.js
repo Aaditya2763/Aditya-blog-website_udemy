@@ -4,6 +4,7 @@ const mongoose=require('mongoose');
 const bcrypt=require('bcryptjs');
 //crypto is a node built in function which return a desired value result in hexadecimal
 const crypto=require('crypto')
+const Post=require('../post/Post')
 //createing user schema
 const  userSchema=new mongoose.Schema({
     firstName:{
@@ -134,6 +135,13 @@ virtuals:true,
    
 }
 );
+
+//Virtual methods to populate created post
+userSchema.virtual('posts',{
+    ref:Post,
+    foreignField:'user',
+    localField:'_id'
+})
 
 //mongoose pre middleware which i am using to hash password before creating user
 // Mongoose pre middleware to hash the password before saving

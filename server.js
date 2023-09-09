@@ -17,14 +17,20 @@ dbConnect();
 
 //middleware use to provide json data to a request
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //importing all auth routes to authroutesroutes
 const authRoutes=require('./routes/auth/authRoutes')
 const userRoutes=require('./routes/users/userRoutes')
- 
+const postRoutes=require('./routes/posts/postRoutes')
+ const commentRoutes=require("./routes/comments/commentsRoutes")
 //allowing app to use routes
 
 app.use(authRoutes); 
 app.use('/users',userRoutes);
+app.use('/api',postRoutes);
+app.use('/api',commentRoutes)
+
+
 
 // always use middleware velow your all routes
 app.use(notFound);

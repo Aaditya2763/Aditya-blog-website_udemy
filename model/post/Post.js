@@ -1,29 +1,69 @@
-// importing mongoose
-const mongoose=require('mongoose');
+const mongoose = require("mongoose");
 
-const Post=mongoose.Schema({
- title:{
-    type:String,
-    required:[true,"Post title is required"],
-
- },
- content:{
-    type:String,
-    required:[true,"content is required"],
- },
- author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+const postSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      // required: [true, "Post title is required"],
+      trim: true,
+    },
+    //Created by only category
+    category: {
+      type: String,
+      // required: [true, "Post category is required"],
+      default: "All",
+    },
+    isLiked: {
+      type: Boolean,
+      default: false,
+    },
+    isDisLiked: {
+      type: Boolean,
+      default: false,
+    },
+    numViews: {
+      type: Number,
+      default: 0,
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    disLikes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      // required: [true, "Please Author is required"],
+    },
+    description: {
+      type: String,
+       // required: [true, "Post description is required"],
+    },
+    postImage: {
+      type: String,
+      default:
+        "https://cdn.pixabay.com/photo/2020/10/25/09/23/seagull-5683637_960_720.jpg",
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
+    timestamps: true,
   }
-})
+);
 
-export default Post;
+//compile
+const post = mongoose.model("post", postSchema);
+
+module.exports = post;

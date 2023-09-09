@@ -4,36 +4,56 @@ const User = require('../../model/user/User');
 const validateMongoDBId = require('../../utils/validateMongodbId');
 const { CourierClient } = require('@trycourier/courier');
 const crypto=require('crypto');
+const fs=require('fs');
 const { now } = require('mongoose');
+const cloudnaryUploadImg = require('../../utils/cloudnary');
+
+
+
+// --------------------------------------------------------------
 /* ------------------------ All Users ------------------------ */
+// --------------------------------------------------------------
+
 const getAllUsers = expressAsyncHandler(async (req, res) => {
   try {
-    const allUsers = await User.find({});
+    const allUsers = await User.find({}).select('-password');
     res.json(allUsers);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
   }
 },{now:true});
 
-/* ------------------------ Fetch User ------------------------ */
+
+// --------------------------------------------------------------
+/* ------------------------ Fetch User Details ------------------------ */
+// --------------------------------------------------------------
+
 const fetchUser = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
 
   // Validate MongoDB ID
   validateMongoDBId(id);
-
+  
   try {
-    const userData = await User.findById(id).select('-password');
+    const userData = await User.findById(id).select('-password').populate('posts')
+  console.log("fghjksdfghj")
+  console.log(userData)
     if (!userData) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.json(userData);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error',error });
   }
 },{now:true});
 
+
+
+
+// --------------------------------------------------------------
 /* ------------------------ Delete User ------------------------ */
+// --------------------------------------------------------------
+
 const deleteUser = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDBId(id);
@@ -49,7 +69,12 @@ const deleteUser = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ User Profile ------------------------ */
+// --------------------------------------------------------------
+
+
 const userProfile = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDBId(id);
@@ -65,7 +90,11 @@ const userProfile = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Update Profile ------------------------ */
+// --------------------------------------------------------------
+
 const updateProfile = expressAsyncHandler(async (req, res) => {
   const { id } = req.user;
   validateMongoDBId(id);
@@ -94,7 +123,11 @@ const updateProfile = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Update Password ------------------------ */
+// --------------------------------------------------------------
+
 const updatePassword = expressAsyncHandler(async (req, res) => {
   const { id } = req.user;
   validateMongoDBId(id);
@@ -118,7 +151,12 @@ const updatePassword = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Following User ------------------------ */
+// --------------------------------------------------------------
+
+
 const followingUserCtrl = expressAsyncHandler(async (req, res) => {
   const { followId } = req.body;
   const loginUserId = req.user.id;
@@ -155,7 +193,11 @@ const followingUserCtrl = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Unfollow User ------------------------ */
+// --------------------------------------------------------------
+
 const unfollowUserCtrl = expressAsyncHandler(async (req, res) => {
   const { unfollowId } = req.body;
   const loginUserId = req.user.id;
@@ -179,7 +221,12 @@ const unfollowUserCtrl = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Block User ------------------------ */
+// --------------------------------------------------------------
+
+
 const blockUserCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDBId(id);
@@ -199,7 +246,11 @@ const blockUserCtrl = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ Unblock User ------------------------ */
+// --------------------------------------------------------------
+
 const unblockUserCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDBId(id);
@@ -219,7 +270,11 @@ const unblockUserCtrl = expressAsyncHandler(async (req, res) => {
   }
 },{now:true});
 
+
+// --------------------------------------------------------------
 /* ------------------------ sent Account Verification-token via email------------------------ */
+// --------------------------------------------------------------
+
 
 const geverateVerifyAccountToken = expressAsyncHandler(async (req, res) => {
  
@@ -263,7 +318,10 @@ res.status(200).json(error)
   }
 },{now:true})
 
+
+// --------------------------------------------------------------
 // -------------------------Verify email---------------------
+// --------------------------------------------------------------
 
 const verifyAccount=expressAsyncHandler(async(req,res)=>{
 try {
@@ -289,7 +347,10 @@ try {
 }, {now:true})
 
 
+// --------------------------------------------------------------
 // ------------------------passwordResetToke----------------------------
+// --------------------------------------------------------------
+
 const generatePasswordResetToken=expressAsyncHandler(async(req,res)=>{
   const{email}=req.body;
     const user=await User.findOne({email:email})
@@ -304,7 +365,7 @@ const generatePasswordResetToken=expressAsyncHandler(async(req,res)=>{
     await user.save()
     
       const courier = CourierClient(
-    { authorizationToken: "pk_prod_JT8SGGK9FK4W23JE52KK51Q530RG"});
+    { authorizationToken:`${process.env.COURIER_TOKEN}`});
 
       const { requestId } = await courier.send({
         message: {
@@ -331,7 +392,11 @@ const generatePasswordResetToken=expressAsyncHandler(async(req,res)=>{
     res.status(400).json("email not found");
   }
 })
+
+
+// --------------------------------------------------------------
 // -------------------------change Password---------------------
+// --------------------------------------------------------------
 
 const changePasswordCtrl=expressAsyncHandler(async(req,res)=>{
   try {
@@ -349,7 +414,7 @@ const changePasswordCtrl=expressAsyncHandler(async(req,res)=>{
     
    user.password=password;
     user.passwordResetToken=undefined;
-    passwordResetExpires=undefined;
+    user.passwordResetExpires=undefined;
     await user.save();
     res.status(200).json("password updated successfully")
   } catch (error) {
@@ -358,6 +423,50 @@ const changePasswordCtrl=expressAsyncHandler(async(req,res)=>{
   }, {now:true})
   
   
+  // --------------------------------------------------------------
+// -------------------------Updating user profile controller---------------------
+// --------------------------------------------------------------
+
+const userProfileUpdateCtrl = expressAsyncHandler(async (req, res) => {
+  try {
+    // Assuming req.file contains the uploaded image
+
+    // Get the user ID from req.user or wherever it is available
+    const { id } = req.user;
+
+    // Get the local path to the uploaded image
+    const localPath = `public/images/profile/${req.file.filename}`;
+
+    // Upload the image to Cloudinary
+    const imgUploaded = await cloudnaryUploadImg(localPath);
+
+    if (!imgUploaded || !imgUploaded.url) {
+      return res.status(500).json({ message: 'Image upload to Cloudinary failed.' });
+    }
+
+    // Update the user's profilePhoto field with the Cloudinary URL
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: { profilePhoto: imgUploaded.url } },
+      { new: true } // Return the updated user object
+    );
+    //removing imgae file  from public folder
+    fs.unlinkSync(localPath)
+
+    // Check if the user was found and updated successfully
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Send a success response with the updated user object
+    res.status(200).json({ user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+
     
 module.exports = {
   getAllUsers,
@@ -373,5 +482,6 @@ module.exports = {
   geverateVerifyAccountToken,
   verifyAccount,
   generatePasswordResetToken,
-  changePasswordCtrl
+  changePasswordCtrl,
+  userProfileUpdateCtrl
 };
