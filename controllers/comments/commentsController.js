@@ -77,7 +77,8 @@ const updateCommentsCtrl=expressAsyncHandler(async(req,res)=>{
     const{id}=req.params
     const {postId,description}=req.body;
     validateMongoDBId(id)
-    try {
+    try {   
+
         const comment=await Comment.findByIdAndUpdate(id,{
             postId:postId,
             user:user,
@@ -89,6 +90,11 @@ const updateCommentsCtrl=expressAsyncHandler(async(req,res)=>{
     }
     
 },{new:true})
+
+
+// -------------------------------------------------------------
+// ---------------- post comment--------------------------------
+// -------------------------------------------------------------
 
 
 module.exports={
